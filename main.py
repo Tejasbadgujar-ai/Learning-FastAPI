@@ -1,5 +1,6 @@
 from fastapi import FastAPI,Request  # create a class 
-from mockdata import products
+from mockdata import products 
+from dtos import ProductDTO
 
 app = FastAPI() 
 
@@ -49,3 +50,51 @@ def greet_user(request: Request):    #name:str,age=21  that like also define him
      return {
           "greet": f"Hello {query_parameter.get('name')}, Your age is {query_parameter.get('age')}"
      }
+
+## different types of http method
+#post method means create any product
+@app.post("/create_product")
+def create_product(product_data:ProductDTO):
+     product_data = product_data.model_dump()  #modeldump is pydantic function they convert dictionary
+     products.append(product_data)
+
+     return {"status": "product created successfully...", 
+             "data":products
+     }
+
+#put means update method
+@app.put("/update_product/{product_id}")
+def update_product(product_data:ProductDTO, product_id:int):    
+
+     for index, oneProduct in enumerate(products):
+          if oneProduct.get("id") == product_id:   
+               products[index] = product_data.model_dump()
+               return {"status": "product updated successfully...", "product":product_data}
+
+                                                                  #enumerate they provide him iindex number and data that both
+
+     return {
+          "error":"product not found for this id."
+     }
+
+#delete method 
+@app.delete("/delete_product/{product_id}")
+def delete_product(product_id:int):
+     for index, oneProduct in enumerate(products):
+          if oneProduct.get("id") == product_id:
+              deleted_product = products.pop(index)
+              return {"status": "product delete successfully...","product":{} }
+
+     return {
+          "error":"product not found for this id."
+     }
+
+#pydantic python data type provide through pydantic
+
+
+
+
+
+
+
+##postman
