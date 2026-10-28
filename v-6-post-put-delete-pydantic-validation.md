@@ -1,14 +1,14 @@
-# Implement POST, PUT & DELETE Methods in FastAPI
+## Implement POST, PUT, DELETE and Pydantic Validation
 
-In this video, I learned how to create, update and delete products using FastAPI. I also learned how to validate product data using Pydantic.
+In this video, I learned how to create, update, and delete products using FastAPI. I also learned how to validate product data using Pydantic and test API endpoints with Postman.
 
 ## 1. Files Used
 
-* **main.py:** I implemented the POST, PUT and DELETE endpoints in this file.
-* **dtos.py:** I created a `ProductDTO` class to define and validate product data.
-* **mockdata.py:** I used the existing `products` list to store product data temporarily.
+* `main.py` — I created the API endpoints in this file.
+* `dtos.py` — I defined the `ProductDTO` class for product validation.
+* `mockdata.py` — I stored sample product data in a Python list.
 
-## 2. ProductDTO and Pydantic Validation
+## 2. ProductDTO and Pydantic
 
 I created a `ProductDTO` class using Pydantic's `BaseModel`.
 
@@ -22,88 +22,105 @@ class ProductDTO(BaseModel):
     count: int = 0
 ```
 
-**What I learned:**
+Here, `id` should be an integer and `title` should be a string. The price and count have default values of `0`.
 
-* `id: int` means the ID must be an integer.
-* `title: str` means the title must be a string.
-* `price: int = 0` means the price is an integer and defaults to 0 if not provided.
-* `count: int = 0` means the count defaults to 0 if not provided.
-
-Pydantic validates incoming data according to the model. For example, if the required `title` field is missing, FastAPI returns a validation error.
+FastAPI uses this model to validate the data received from POST and PUT requests.
 
 ## 3. POST Method — Create a Product
 
-I created the `/create_product` endpoint using the POST method.
-
-**What I learned:**
-
-* `product_data: ProductDTO` validates the incoming product data.
-* `model_dump()` converts the Pydantic model into a Python dictionary.
-* `append()` adds the new product to the end of the products list.
-
-**Example:**
-
-If I send a new product through Postman, the endpoint validates the data and adds it to the list.
+I used the POST method to add a new product to the product list.
 
 ```python
-product_data = product_data.model_dump()
-products.append(product_data)
+new_product = product_data.model_dump()
+products.append(new_product)
+return new_product
 ```
+
+`model_dump()` converts the Pydantic model into a dictionary, and `append()` adds the new product to the list.
+
+During code review, I added a check to prevent duplicate product IDs. If the ID already exists, the API returns `400 Bad Request`. When a product is created successfully, it returns `201 Created`.
+
+For example, I can send a product with an ID, title, price, and count through Postman.
 
 ## 4. PUT Method — Update a Product
 
-I created the `/update_product/{product_id}` endpoint using the PUT method.
+I used PUT to update an existing product by its ID.
 
-**What I learned:**
+```python
+updated = product_data.model_dump()
+updated["id"] = product_id
+products[index] = updated
+return updated
+```
 
-* `product_id` identifies which product I want to update.
-* `enumerate(products)` provides both the index and the product while looping through the list.
-* `oneProduct.get("id")` gets the product's ID so I can compare it with the requested ID.
-* `model_dump()` converts the updated product data into a dictionary.
-* `products[index] = ...` replaces the existing product at that index.
+I used `enumerate(products)` to get the index and product while searching the list. After finding the product, I update it at the same index.
 
-**Example:**
+During code review, I fixed an issue where the ID from the request body could replace the product ID in the URL. Now, the URL ID takes priority.
 
-If I want to update product ID 2, I send the updated product details through Postman using a PUT request.
+For example, if the URL contains `/update_product/1` but the request body contains `"id": 5`, the updated product keeps ID `1`.
+
+If the product does not exist, the API returns `404 Not Found`.
 
 ## 5. DELETE Method — Delete a Product
 
-I created the `/delete_product/{product_id}` endpoint using the DELETE method.
-
-**What I learned:**
-
-* I use `product_id` to identify the product to delete.
-* I use `enumerate()` to get the product's index and data.
-* `pop(index)` removes the product at the specified index and returns the removed product.
-
-**Example:**
-
-If I want to delete product ID 2, the endpoint searches for that product and removes it from the list.
+I used DELETE to remove a product from the list.
 
 ```python
 deleted_product = products.pop(index)
+return deleted_product
 ```
 
-I can use `deleted_product` in the response to show which product was removed.
+`pop(index)` removes the product and returns the removed item.
 
-## 6. Testing with Postman
+During code review, I changed the response to return the actual deleted product instead of an empty object. If the product is not found, the API returns `404 Not Found`.
 
-I learned to test these endpoints using Postman.
+## 6. GET Method — Handle Missing Products
 
-* **POST:** Create a product.
-* **PUT:** Update an existing product.
-* **DELETE:** Delete a product.
+I used the GET endpoint `/product/{product_id}` to find a product by its ID.
 
-I send the product data in JSON format for POST and PUT requests.
+During code review, I changed the not-found response to use `HTTPException`.
 
-## What I Learned in This Video
+```python
+raise HTTPException(
+    status_code=404,
+    detail="Product not found"
+)
+```
 
-* How to implement POST, PUT and DELETE endpoints in FastAPI.
-* How to define product fields using Pydantic's `BaseModel`.
-* How Pydantic validates incoming data.
-* How `model_dump()` converts a model into a dictionary.
-* How `append()` adds an item to a list.
-* How `enumerate()` provides an index and an item.
-* How `pop()` removes an item from a list.
-* How to test API requests using Postman.
+Earlier, the endpoint returned an error dictionary with status `200 OK`. Now, it correctly returns `404 Not Found` when the product does not exist.
 
+I also applied the same not-found handling to the PUT and DELETE endpoints.
+
+## 7. Query Parameters in `/greet`
+
+I updated the `/greet` endpoint to use typed query parameters.
+
+```python
+@app.get("/greet")
+def greet_user(name: str, age: int = 21):
+    return {
+        "greet": f"Hello {name}, your age is {age}"
+    }
+```
+
+Here, `name` is a string and `age` is an integer with a default value of `21`.
+
+For example, `/greet?name=Tejas&age=21` returns a greeting. If I pass `age=abc`, FastAPI returns a `422` validation error because the age should be an integer.
+
+## 8. Testing with Postman
+
+I tested the endpoints using Postman:
+
+* GET — retrieve existing and missing products.
+* POST — create a product and check duplicate IDs.
+* PUT — update a product and check that the URL ID is preserved.
+* DELETE — delete a product and check the response.
+* `/greet` — test valid and invalid query parameters.
+
+I checked the expected HTTP status codes, including `201`, `400`, `404`, and `422`.
+
+## What I Learned
+
+I learned how to implement CRUD operations, validate product data with Pydantic, use `model_dump()`, `append()`, `enumerate()`, and `pop()`, and return appropriate HTTP status codes.
+
+**Note:** The products are stored in a Python list, so the changes are temporary and are not permanently saved in a database.
