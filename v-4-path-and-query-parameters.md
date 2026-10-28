@@ -1,90 +1,89 @@
-## Path Parameters & Query Parameters in FastAPI
+Video 4: Path Parameters and Query Parameters in FastAPI
 
-## 1. Start the Server
+1. Start the Server
 
-First, I started the FastAPI server using this command in the VS Code terminal.
+I can start the FastAPI server with:
 
-```bash
 fastapi dev main.py
-```
 
-After starting the server, I opened the URLs in my browser to check the output.
+After the server starts, I can test the endpoints in a browser or API client.
 
-## 2. Path Parameters
+2. Path Parameters
 
-I learned how to use path parameters to get a particular product using its ID.
+A path parameter is part of the URL. I used product_id to find one product by its ID.
 
-In the URL, `{product_id}` is a dynamic value. We can pass a product ID directly in the URL.
-
-```python
 @app.get("/product/{product_id}")
 def get_one_product(product_id: int):
-    for oneProduct in products:
-        if oneProduct.get("id") == product_id:
-            return oneProduct
+    for product in products:
+        if product["id"] == product_id:
+            return product
+    return {"error": "Product not found for this id"}
 
-    return {
-        "error": "Product not found for this id"
-    }
-```
+{product_id} is a dynamic value in the path.
 
-Here, `product_id: int` means the product ID should be an integer.
+product_id: int tells FastAPI that the value should be an integer.
 
-The function checks the products one by one. If the ID matches, it returns that product. Otherwise, it returns an error message.
+The function checks the product list and returns the matching product.
 
-**Browser URL:**
+Example URL: http://127.0.0.1:8000/product/1
 
-`http://127.0.0.1:8000/product/1`
+3. Query Parameters
 
-## 3. Query Parameters
+Query parameters are written after ? in a URL. In the original practice code, I used Request and request.query_params to read them.
 
-I learned how to pass values like name and age through the URL and use them in a function.
-
-For this, I used `Request` and `request.query_params`.
-
-```python
 @app.get("/greet")
 def greet_user(request: Request):
     query_parameter = dict(request.query_params)
-
     return {
         "greet": f"Hello {query_parameter.get('name')}, Your age is {query_parameter.get('age')}"
     }
-```
 
-Here, `request.query_params` gets the values from the URL, and `dict()` converts them into a dictionary.
+Example URL: http://127.0.0.1:8000/greet?name=Tejas&age=20
 
-The `.get()` method helps me access the name and age values.
+This version reads query parameters from the request and converts them to a dictionary.
 
-**Browser URL:**
+4. Path Parameters vs Query Parameters
 
-`http://127.0.0.1:8000/greet?name=Tejas&age=20`
+Path parameter example: /product/1
 
-**Output:**
+Query parameter example: /greet?name=Tejas&age=20
 
-```json
-{
-    "greet": "Hello Tejas, Your age is 20"
-}
-```
+Path parameters are part of the URL path. Query parameters appear after ?.
 
-## 4. Path Parameters vs Query Parameters
+5. Code Review Update: Typed Query Parameters
 
-**Path Parameters:** I used a path parameter to get a product using its ID.
+During the code review, I replaced the manual Request handling with FastAPI's typed query parameters, as requested in the review.
 
-Example: `/product/1`
+@app.get("/greet")
+def greet_user(name: str, age: int = 21):
+    return {
+        "greet": f"Hello {name}, your age is {age}"
+    }
 
-**Query Parameters:** I used query parameters to pass the name and age through the URL.
+name: str makes name a required string query parameter.
 
-Example: `/greet?name=Tejas&age=20`
+age: int = 21 makes age an integer and gives it a default value of 21.
 
-The main difference is that path parameters are part of the URL path, while query parameters come after the `?` symbol.
+FastAPI validates the query parameters automatically.
 
-## 5. What I Practiced
+A request such as /greet?name=Tejas&age=abc returns a 422 validation error because abc is not an integer.
 
-* Starting the FastAPI server using `fastapi dev main.py`.
-* Getting a product using its ID with a path parameter.
-* Returning an error message when a product ID is not found.
-* Passing name and age through query parameters.
-* Getting query parameter values using `request.query_params`.
-* Checking the output in the browser.
+/greet?name=Tejas uses the default age of 21.
+
+6. Code Review Update: Not-Found Response
+
+The product-by-ID endpoint was updated to return an actual HTTP 404 response when a product is missing, instead of returning an error dictionary with status 200.
+
+raise HTTPException(status_code=404, detail="Product not found")
+
+7. What I Practiced
+
+Starting the FastAPI server.
+
+Finding a product by its ID.
+
+Passing values through query parameters.
+
+Using typed query parameters and automatic validation.
+
+Returning a 404 status when a requested product does not exist.
