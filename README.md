@@ -30,3 +30,28 @@ uvicorn main:app --reload
 After starting the application, open:
 
 http://127.0.0.1:8000/docs
+
+
+
+
+### Video 7+: Task Management App
+
+The Task Management application is located in the `task_management_app/` folder.
+
+### Run the Application
+
+Open a terminal in the project root and run:
+
+```powershell
+cd task_management_app
+python -m venv env
+.\env\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+python -m uvicorn main:app --reload
+```
+
+Open the API documentation:
+
+http://127.0.0.1:8000/docs
+
+The application's code and dependencies are maintained separately from the FastAPI examples in the repository root.
