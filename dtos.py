@@ -6,4 +6,4 @@ class ProductDTO(BaseModel):
     id: int
     title: str
     price: int = 0  # default value 0
-    count: int = 0  # data type int dafult value 0 
+    count: int = 0  # data type int dafault value 0 

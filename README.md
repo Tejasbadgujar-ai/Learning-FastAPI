@@ -55,3 +55,5 @@ Open the API documentation:
 http://127.0.0.1:8000/docs
 
 The application's code and dependencies are maintained separately from the FastAPI examples in the repository root.
+
+Videos 7+: `task_management_app/` (run: `cd task_management_app && uvicorn main:app --reload`)
