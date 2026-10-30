@@ -31,9 +31,6 @@ After starting the application, open:
 
 http://127.0.0.1:8000/docs
 
-
-
-
 ### Video 7+: Task Management App
 
 The Task Management application is located in the `task_management_app/` folder.
@@ -56,4 +53,4 @@ http://127.0.0.1:8000/docs
 
 The application's code and dependencies are maintained separately from the FastAPI examples in the repository root.
 
-Videos 7+: `task_management_app/` (run: `cd task_management_app && uvicorn main:app --reload`)
+### Video 8: Connect PostgreSQL Database with FastAPI using SQLAlchemy
