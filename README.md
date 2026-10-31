@@ -53,4 +53,8 @@ http://127.0.0.1:8000/docs
 
 The application's code and dependencies are maintained separately from the FastAPI examples in the repository root.
 
-### Video 8: Connect PostgreSQL Database with FastAPI using SQLAlchemy
+### Video 8: Setup (database)
+
+1. Copy `.env.example` to `.env` inside `task_management_app/`
+2. Put your real PostgreSQL URL in `DB_CONNECTION`
+3. Run: `uvicorn main:app --reload`
