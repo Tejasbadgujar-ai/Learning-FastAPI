@@ -59,7 +59,7 @@ SQLAlchemy is a Python library that helps applications communicate with database
 Started the FastAPI development server using:
 
 ```bash
-fastapi dev main.py
+uvicorn main:app --reload
 ```
 
 Successfully started the FastAPI application after configuring the PostgreSQL database connection.
