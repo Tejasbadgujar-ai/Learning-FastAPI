@@ -4,3 +4,4 @@ class TaskSchema(BaseModel):
     title : str
     description : str
     is_completed : bool = False
+    
