@@ -8,12 +8,12 @@ Previously, I learned how to create tasks using POST. In this video, I learned h
 
 ## 1. Controller.py
 
-I added a new function named `new_tasks()` to retrieve all existing tasks from the database.
+I added a new function named `get_all_tasks()` to retrieve all existing tasks from the database.
 
 ### Code Added
 
 ```python
-def new_tasks(db: Session):
+def get_all_tasks(db: Session):
 
     tasks = db.query(TaskModel).all()
 
@@ -22,7 +22,7 @@ def new_tasks(db: Session):
 
 ### Explanation
 
-* `new_tasks(db: Session)`: Creates a function that receives the database session.
+* `get_all_tasks(db: Session)`: Creates a function that receives the database session.
 * `db.query(TaskModel)`: Fetches records from the TaskModel table.
 * `.all()`: Retrieves all available task records.
 * `return`: Returns the retrieved tasks with a status message.
@@ -38,7 +38,7 @@ I added a new GET route to fetch all tasks.
 ```python
 @task_routes.get("/all_tasks")
 def get_all_tasks(db: Session = Depends(get_db)):
-    return controller.new_tasks(db)
+    return controller.get_all_tasks(db)
 ```
 
 ### Explanation
@@ -46,13 +46,13 @@ def get_all_tasks(db: Session = Depends(get_db)):
 * `@task_routes.get("/all_tasks")`: Creates a GET endpoint.
 * `get_all_tasks()`: Handles the incoming GET request.
 * `Depends(get_db)`: Provides the database session.
-* `controller.new_tasks(db)`: Calls the new controller function and passes the database session.
+* `controller.get_all_tasks(db)`: Calls the new controller function and passes the database session.
 
 ## 3. How It Works
 
 1. The client sends a GET request.
 2. The router receives the request.
-3. The router calls `new_tasks()` from the controller.
+3. The router calls `get_all_tasks()` from the controller.
 4. The controller fetches all tasks from the database.
 5. The retrieved tasks are returned to the client.
 
