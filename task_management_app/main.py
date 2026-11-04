@@ -1,8 +1,8 @@
-﻿from fastapi import FastAPI
+from fastapi import FastAPI
 
-from src.utils.db import Base, engine
 from src.tasks.models import TaskModel  # noqa: F401 (needed for create_all)
 from src.tasks.router import task_routes
+from src.utils.db import Base, engine
 
 Base.metadata.create_all(engine)
 
