@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from fastapi import HTTPException
 
 from src.tasks.dtos import TaskSchema
 from src.tasks.models import TaskModel
@@ -24,3 +25,11 @@ def create_task(body: TaskSchema, db: Session):
 def get_all_tasks(db: Session):
     tasks = db.query(TaskModel).all()
     return {"status": "all tasks", "data": tasks}
+
+
+def get_one_tasks( task_id:int, db:Session):
+    one_task = db.query(TaskModel).get(task_id)
+    if not one_task:
+        raise HTTPException(status_code=404, detail="Task Id is Incorrect")
+
+    return {"status": "task fatched succcessfully", "data": one_task}
