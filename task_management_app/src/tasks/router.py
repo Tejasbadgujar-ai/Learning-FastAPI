@@ -19,5 +19,5 @@ def get_all_tasks(db: Session = Depends(get_db)):
 
 
 @task_routes.get("/one_task/{task_id}")
-def get_one_task(task_id: int, db = Depends(get_db)):
+def get_one_task(task_id: int, db: Session = Depends(get_db)):
     return controller.get_one_tasks(task_id, db)

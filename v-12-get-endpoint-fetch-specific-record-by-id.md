@@ -13,7 +13,7 @@ I worked mainly in two files:
 
 ## 1. Controller.py
 
-I imported `HTTPException` from FastAPI and added a new function named `get_one_tasks()` to fetch a specific task from the database.
+I imported `HTTPException` from FastAPI and added a new function named `get_one_task()` to fetch a specific task from the database.
 
 ### Code Added
 
@@ -21,7 +21,7 @@ I imported `HTTPException` from FastAPI and added a new function named `get_one_
 from fastapi import HTTPException
 
 def get_one_tasks(task_id: int, db: Session):
-    one_task = db.query(TaskModel).get(task_id)
+    one_task = db.get(TaskModel, task_id).get(task_id)
 
     if not one_task:
         raise HTTPException(
@@ -37,12 +37,15 @@ def get_one_tasks(task_id: int, db: Session):
 
 ### Explanation
 
-* `get_one_tasks(task_id, db)`: Creates a function that receives the task ID and database session.
+* `get_one_task(task_id, db)`: Creates a function that receives the task ID and database session.
 * `db.query(TaskModel)`: Queries the TaskModel table.
 * `.get(task_id)`: Fetches the task using its primary key ID.
 * `if not one_task`: Checks whether the requested task exists.
 * `HTTPException`: Raises an HTTP error if the task ID is incorrect.
 * `return`: Returns the specific task with a status message.
+
+*The 404 error occurred because I used an incorrect URL in Postman. I used `/tasks/one_tasks/1` instead of the correct endpoint `/tasks/one_task/1`. After correcting the URL, the endpoint worked correctly.
+
 
 ## 2. Router.py
 
@@ -53,7 +56,7 @@ I added a new GET route to fetch a specific task using its ID.
 ```python
 @task_routes.get("/one_task/{task_id}")
 def get_one_task(task_id: int, db=Depends(get_db)):
-    return controller.get_one_tasks(task_id, db)
+    return controller.get_one_task(task_id, db)
 ```
 
 ### Explanation

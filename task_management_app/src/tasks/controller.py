@@ -27,9 +27,10 @@ def get_all_tasks(db: Session):
     return {"status": "all tasks", "data": tasks}
 
 
-def get_one_tasks( task_id:int, db:Session):
-    one_task = db.query(TaskModel).get(task_id)
-    if not one_task:
-        raise HTTPException(status_code=404, detail="Task Id is Incorrect")
+def get_one_task(task_id: int, db: Session):
+    task = db.get(TaskModel, task_id)
 
-    return {"status": "task fatched succcessfully", "data": one_task}
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    return {"status": "task fetched successfully", "data": task}
