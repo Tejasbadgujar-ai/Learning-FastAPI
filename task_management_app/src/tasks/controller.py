@@ -34,3 +34,30 @@ def get_one_task(task_id: int, db: Session):
         raise HTTPException(status_code=404, detail="Task not found")
 
     return {"status": "task fetched successfully", "data": task}
+
+
+def update_task(body: TaskSchema, task_id: int, db: Session):
+    one_task = db.get(TaskModel,task_id)
+    if not one_task:
+        raise HTTPException(status_code=404, detail="Task Id is Incorrect")
+
+    body = body.model_dump()
+    for field, value in body.items():
+        setattr(one_task, field, value)
+
+    db.add(one_task)
+    db.commit()
+    db.refresh(one_task)
+
+    return {"status": "task updated successfully", "data": one_task}
+
+
+def delete_task(task_id: int, db: Session):
+    one_task = db.get(TaskModel,task_id)
+    if not one_task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    db.delete(one_task)
+    db.commit()
+
+    return {"status": "task deleted successfully"}
