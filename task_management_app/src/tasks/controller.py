@@ -39,7 +39,7 @@ def get_one_task(task_id: int, db: Session):
 def update_task(body: TaskSchema, task_id: int, db: Session):
     one_task = db.get(TaskModel,task_id)
     if not one_task:
-        raise HTTPException(status_code=404, detail="Task Id is Incorrect")
+        raise HTTPException(status_code=404, detail="Task not found")
 
     body = body.model_dump()
     for field, value in body.items():
