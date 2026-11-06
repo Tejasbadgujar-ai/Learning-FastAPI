@@ -8,8 +8,8 @@ Previously, I learned how to retrieve all tasks from the database. In this video
 
 I worked mainly in two files:
 
-* `controller.py`
-* `router.py`
+- `controller.py`
+- `router.py`
 
 ## 1. Controller.py
 
@@ -20,13 +20,13 @@ I imported `HTTPException` from FastAPI and added a new function named `get_one_
 ```python
 from fastapi import HTTPException
 
-def get_one_tasks(task_id: int, db: Session):
-    one_task = db.get(TaskModel, task_id).get(task_id)
+def get_one_task(task_id: int, db: Session):
+    one_task = db.get(TaskModel, task_id)
 
     if not one_task:
         raise HTTPException(
             status_code=404,
-            detail="Task Id is Incorrect"
+            detail="Task not found"
         )
 
     return {
@@ -37,15 +37,13 @@ def get_one_tasks(task_id: int, db: Session):
 
 ### Explanation
 
-* `get_one_task(task_id, db)`: Creates a function that receives the task ID and database session.
-* `db.query(TaskModel)`: Queries the TaskModel table.
-* `.get(task_id)`: Fetches the task using its primary key ID.
-* `if not one_task`: Checks whether the requested task exists.
-* `HTTPException`: Raises an HTTP error if the task ID is incorrect.
-* `return`: Returns the specific task with a status message.
+- `get_one_task(task_id, db)`: Creates a function that receives the task ID and database session.
+- `db.get(TaskModel, task_id)`: Fetches the task using its primary key ID. It returns the task if found, otherwise it returns `None`.
+- `if not one_task`: Checks whether the requested task exists.
+- `HTTPException`: Raises an HTTP error if the task is not found.
+- `return`: Returns the specific task with a status message.
 
-*The 404 error occurred because I used an incorrect URL in Postman. I used `/tasks/one_tasks/1` instead of the correct endpoint `/tasks/one_task/1`. After correcting the URL, the endpoint worked correctly.
-
+The 404 error occurred because I used an incorrect URL in Postman. I used `/tasks/one_tasks/1` instead of the correct endpoint `/tasks/one_task/1`. After correcting the URL, the endpoint worked correctly.
 
 ## 2. Router.py
 
@@ -55,17 +53,17 @@ I added a new GET route to fetch a specific task using its ID.
 
 ```python
 @task_routes.get("/one_task/{task_id}")
-def get_one_task(task_id: int, db=Depends(get_db)):
+def get_one_task(task_id: int, db: Session = Depends(get_db)):
     return controller.get_one_task(task_id, db)
 ```
 
 ### Explanation
 
-* `@task_routes.get("/one_task/{task_id}")`: Creates a GET endpoint with a dynamic task ID.
-* `{task_id}`: Accepts the task ID from the URL.
-* `task_id: int`: Defines the task ID as an integer.
-* `Depends(get_db)`: Provides the database session.
-* `controller.get_one_tasks(task_id, db)`: Calls the controller function and passes the task ID and database session.
+- `@task_routes.get("/one_task/{task_id}")`: Creates a GET endpoint with a dynamic task ID.
+- `{task_id}`: Accepts the task ID from the URL.
+- `task_id: int`: Defines the task ID as an integer.
+- `Depends(get_db)`: Provides the database session.
+- `controller.get_one_task(task_id, db)`: Calls the controller function and passes the task ID and database session.
 
 ## 3. How It Works
 
@@ -103,13 +101,13 @@ This helped me understand how to identify and fix routing-related errors in Fast
 
 ## 6. What I Learned
 
-* How to create a GET endpoint for a specific database record.
-* How to pass an ID through a URL path parameter.
-* How to fetch a specific record using SQLAlchemy.
-* How to use `.get()` to retrieve a record using its primary key.
-* How to connect a router function with a controller function.
-* How to use `HTTPException` when a requested task does not exist.
-* How to debug and resolve a 404 error.
+- How to create a GET endpoint for a specific database record.
+- How to pass an ID through a URL path parameter.
+- How to fetch a specific record using SQLAlchemy.
+- How to use `.get()` to retrieve a record using its primary key.
+- How to connect a router function with a controller function.
+- How to use `HTTPException` when a requested task does not exist.
+- How to debug and resolve a 404 error.
 
 ## 7. Additional Concept Learned
 
