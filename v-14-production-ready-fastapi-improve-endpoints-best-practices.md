@@ -94,7 +94,7 @@ Returns one task using the response schema.
 **Update Task:**
 
 ```python
-@task_routes.put("/update_task/{task_id}", response_model=TaskResponseSchema, status_code=201)
+@task_routes.put("/update_task/{task_id}", response_model=TaskResponseSchema, status_code=200)
 ```
 
 Returns the updated task using the response schema.
