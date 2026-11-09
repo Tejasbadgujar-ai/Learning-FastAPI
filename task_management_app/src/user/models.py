@@ -1,14 +1,13 @@
-from sqlalchemy import Column, Integer, DateTime, Boolean, String
+from sqlalchemy import Column, Integer, String
 from src.utils.db import Base
 
-class userModel(Base):
-    __tablename__= "user_table"
 
-    id = Column(Integer, primary_ley=True)
+class UserModel(Base):
+    __tablename__ = "user_table"
+
+    id = Column(Integer, primary_key=True)
     name = Column(String)
-    username = Column(String, nullable=False)
+    username = Column(String, nullable=False, unoque=True)
     hash_password = Column(String, nullable=False)
     email = Column(String)
-    Mobile_num = Column(Integer)
-
-
+    mobile_num = Column(String)
