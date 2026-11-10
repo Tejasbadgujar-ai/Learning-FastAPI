@@ -45,15 +45,10 @@ class UserResponseSchema(BaseModel):
 I added validation to check whether the username already exists.
 
 ```python
-is_user = db.query(UserModel).filter(
-    UserModel.username == body.username
-).first()
+is_user = db.query(UserModel).filter(UserModel.username == body.username).first()
 
 if is_user:
-    raise HTTPException(
-        status_code=400,
-        detail="Username already exist.."
-    )
+    raise HTTPException(status_code=400, detail="Username already exist..")
 ```
 
 ### Explanation
@@ -70,15 +65,10 @@ if is_user:
 I also added validation to check whether the email address already exists.
 
 ```python
-is_user = db.query(UserModel).filter(
-    UserModel.email == body.email
-).first()
+is_user = db.query(UserModel).filter(UserModel.email == body.email).first()
 
 if is_user:
-    raise HTTPException(
-        status_code=400,
-        detail="Email already exists"
-    )
+    raise HTTPException(status_code=400, detail="Email already exists")
 ```
 
 ### Explanation
