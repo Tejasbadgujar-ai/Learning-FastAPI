@@ -11,6 +11,7 @@ Created a `UserSchema` using Pydantic's `BaseModel` to define and validate user 
 ```python
 from pydantic import BaseModel
 
+
 class UserSchema(BaseModel):
     name: str
     username: str
@@ -31,6 +32,7 @@ Created a SQLAlchemy user model to define the database table.
 ```python
 from sqlalchemy import Column, Integer, String
 from src.utils.db import Base
+
 
 class UserModel(Base):
     __tablename__ = "user_table"
@@ -59,6 +61,7 @@ Created a registration controller to handle incoming user data.
 from src.user.dtos import UserSchema
 from sqlalchemy.orm import Session
 
+
 def register(body: UserSchema, db: Session):
     return {"msg": "Registration done"}
 ```
@@ -81,6 +84,7 @@ from src.user.dtos import UserSchema
 from src.user import controller
 
 user_routes = APIRouter(prefix="/user")
+
 
 @user_routes.post("/register", status_code=201)
 def register(body: UserSchema, db: Session = Depends(get_db)):

@@ -45,15 +45,10 @@ class UserResponseSchema(BaseModel):
 I added validation to check whether the username already exists.
 
 ```python
-is_user = db.query(UserModel).filter(
-    UserModel.username == body.username
-).first()
+is_user = db.query(UserModel).filter(UserModel.username == body.username).first()
 
 if is_user:
-    raise HTTPException(
-        status_code=400,
-        detail="Username already exist.."
-    )
+    raise HTTPException(status_code=400, detail="Username already exist..")
 ```
 
 ### Explanation
@@ -70,15 +65,10 @@ if is_user:
 I also added validation to check whether the email address already exists.
 
 ```python
-is_user = db.query(UserModel).filter(
-    UserModel.email == body.email
-).first()
+is_user = db.query(UserModel).filter(UserModel.email == body.email).first()
 
 if is_user:
-    raise HTTPException(
-        status_code=400,
-        detail="Email already exists"
-    )
+    raise HTTPException(status_code=400, detail="Email already exists")
 ```
 
 ### Explanation
@@ -112,3 +102,24 @@ During today's implementation and testing, I corrected:
 ## Conclusion
 
 In this video, I learned how to implement duplicate username and email validation using SQLAlchemy queries. I also understood how `HTTPException` handles validation errors and how to update a Pydantic response schema with additional fields.
+
+### Password Hashing
+
+Password hashing is an important part of user registration.
+
+- `PasswordHash.recommended()` creates a password hashing instance using recommended hashing algorithms, including Argon2.
+- Argon2 securely hashes passwords.
+- We should never store plain-text passwords in the database because it can expose users' passwords if the database is compromised.
+- Instead, we store the hashed password in the database.
+
+**Code:**
+
+```python
+from pwdlib import PasswordHash
+
+password_hash = PasswordHash.recommended()
+
+
+def get_password_hash(password):
+    return password_hash.hash(password)
+```

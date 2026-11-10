@@ -8,6 +8,7 @@ class UserSchema(BaseModel):
     email: str
     mobile_num: str
 
+
 class UserResponseSchema(BaseModel):
     name: str
     username: str
@@ -15,3 +16,7 @@ class UserResponseSchema(BaseModel):
     mobile_num: str
     id: int
     hash_password: str
+
+class LoginSchema(BaseModel):
+    username : str
+    password : str
