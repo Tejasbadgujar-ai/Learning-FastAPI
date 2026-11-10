@@ -7,3 +7,11 @@ class UserSchema(BaseModel):
     password: str
     email: str
     mobile_num: str
+
+class UserResponseSchema(BaseModel):
+    name: str
+    username: str
+    email: str
+    mobile_num: str
+    id: int
+    hash_password: str
