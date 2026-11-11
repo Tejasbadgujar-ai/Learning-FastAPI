@@ -15,8 +15,8 @@ class UserResponseSchema(BaseModel):
     email: str
     mobile_num: str
     id: int
-    hash_password: str
+
 
 class LoginSchema(BaseModel):
-    username : str
-    password : str
+    username: str
+    password: str
