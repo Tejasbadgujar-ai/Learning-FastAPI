@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from src.user.models import UserModel
 from pwdlib import PasswordHash
 from src.utils.settings import settings
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import jwt
 
 
@@ -48,19 +48,21 @@ def register(body: UserSchema, db: Session):
     }
 
 
-def login_user(body, db: Session ):
+def login_user(body: LoginSchema, db: Session):
     user = db.query(UserModel).filter(UserModel.username == body.username).first()
-    if not user:
-        raise HTTPException(status_code=401, detail="Yoy Entered Wrong Username !")
 
-    if not verify_password(body.password, user.hash_password):
-        raise HTTPException(status_code=401, detail="Yoy Entered Wrong Password !")
+    if not user or not verify_password(body.password, user.hash_password):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid username or password"
+        )
 
-    exp_time = datetime.now() + timedelta(minutes=settings.EXP_TIME)
-    print(exp_time)
-    token = jwt.encode({"id":user.id, "exp":exp_time}, settings.SECRET_KEY, settings.ALGORITHM)
+    exp_time = datetime.now(timezone.utc) + timedelta(minutes=settings.EXP_TIME)
 
+    token = jwt.encode(
+        {"id": user.id, "exp": exp_time},
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
 
-    return {"token":token}
-    ""
-    
+    return {"token": token}
