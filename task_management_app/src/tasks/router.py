@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
+from typing import List
 
 from src.tasks import controller
 from src.tasks.dtos import TaskResponseSchema, TaskSchema
@@ -13,7 +14,7 @@ def create_task(body: TaskSchema, db: Session = Depends(get_db)):
     return controller.create_task(body, db)
 
 
-@task_routes.get("/all_tasks", response_model=list[TaskResponseSchema], status_code=200)
+@task_routes.get("/all_tasks", response_model=List[TaskResponseSchema], status_code=200)
 def get_all_tasks(db: Session = Depends(get_db)):
     return controller.get_all_tasks(db)
 
