@@ -64,9 +64,9 @@ I created a POST login endpoint:
 The route accepts `LoginSchema` as the request body and uses `Depends(get_db)` to get the database session.
 
 ```python
-@router.post("/login")
+@user_routes.post("/login")
 def login(body: LoginSchema, db: Session = Depends(get_db)):
-    return login_user(body, db)
+    return controller.login_user(body, db)
 ```
 
 It then calls the `login_user()` function from the controller.
@@ -92,7 +92,7 @@ user = db.query(UserModel).filter(
 Password verification:
 
 ```python
-verify_password(body.password, user.password)
+verify_password(body.password, user.hash_password)
 ```
 
 If the credentials are incorrect, `HTTPException` is used to return HTTP 401 Unauthorized.
@@ -136,9 +136,9 @@ I used the HS256 algorithm to generate the JWT signature.
 I used Python's `datetime` and `timedelta` to calculate the token expiration time.
 
 ```python
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
-exp_time = datetime.utcnow() + timedelta(
+exp_time = datetime.now(timezone.utc) + timedelta(
     minutes=settings.EXP_TIME
 )
 ```
