@@ -37,7 +37,7 @@ class UserResponseSchema(BaseModel):
 ### Explanation
 
 - `UserResponseSchema` defines the structure of the response returned by the registration API.
-- I added `hash_password: str` so that the hashed password is also included in the response.
+- I added `hash_password: str` The hash is not returned in the response, for security.
 - The field type `str` indicates that the hash password value must be a string.
 
 ## 3. Username Validation (`controller.py`)
@@ -87,10 +87,8 @@ I tested the validation functionality using Postman.
 - Tested duplicate username validation.
 - Received `400 Bad Request` when using an existing username.
 - Tested duplicate email validation.
-- Checked the registration response after adding `hash_password` to the response schema.
-- Verified that the password was stored in hashed form in the database.
-
-## 6. Errors and Corrections
+- Checked the registration response after adding `hash_password` to 
+- The hash is not returned in the response, for security.
 
 During today's implementation and testing, I corrected:
 
