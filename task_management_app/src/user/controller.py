@@ -1,13 +1,15 @@
-from fastapi import HTTPException, status, Request
-from src.user.dtos import UserSchema, LoginSchema
-from sqlalchemy.orm import Session
-from src.user.models import UserModel
-from pwdlib import PasswordHash
-from src.utils.settings import settings
 from datetime import datetime, timedelta, timezone
-import jwt
-from jwt.exceptions import InvalidTokenError
 
+import jwt
+from fastapi import HTTPException, Request, Depends
+from jwt.exceptions import InvalidTokenError
+from pwdlib import PasswordHash
+from sqlalchemy.orm import Session
+
+from src.user.dtos import LoginSchema, UserSchema
+from src.user.models import UserModel
+from src.utils.settings import settings
+from src.utils.db import get_db
 
 password_hash = PasswordHash.recommended()
 
@@ -57,10 +59,10 @@ def login_user(body: LoginSchema, db: Session):
     if not user or not verify_password(body.password, user.hash_password):
         raise HTTPException(status_code=401, detail="Invalid username or password")
 
-    exp_time = datetime.now(timezone.utc) + timedelta(seconds=30)
+    exp_time = datetime.now(timezone.utc) + timedelta(minutes=settings.EXP_TIME)
 
     token = jwt.encode(
-        {"id": user.id, "exp": exp_time.timestamp()},
+        {"id": user.id, "exp": exp_time},
         settings.SECRET_KEY,
         algorithm=settings.ALGORITHM,
     )
@@ -68,14 +70,14 @@ def login_user(body: LoginSchema, db: Session):
     return {"token": token}
 
 
-def is_authenticated(request: Request, db: Session):
+def is_authenticated(request: Request, db: Session = Depends(get_db)):
     try:
-        token = request.headers.get("authorization")
+        auth = request.headers.get("authorization")
 
-        if not token:
-            raise HTTPException(status_code=401, detail="You Are unauthorized.")
+        if not auth or not auth.startswith("Bearer "):
+            raise HTTPException(status_code=401, detail="Not authenticated")
 
-        token = token.split(" ")[-1]
+        token = auth.replace("Bearer ", "", 1)
 
         data = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
 
@@ -84,9 +86,9 @@ def is_authenticated(request: Request, db: Session):
         user = db.query(UserModel).filter(UserModel.id == user_id).first()
 
         if not user:
-            raise HTTPException(status_code=401, detail="You Are unauthorized.")
+            raise HTTPException(status_code=401, detail="Not authenticated")
 
         return user
 
-    except jwt.InvalidTokenError:
-        raise HTTPException(status_code=401, detail="You Are unauthorized.")
+    except InvalidTokenError:
+        raise HTTPException(status_code=401, detail="Not authenticated")
