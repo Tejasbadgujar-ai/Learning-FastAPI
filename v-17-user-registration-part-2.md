@@ -22,8 +22,7 @@ username = Column(String, nullable=False, unique=True)
 
 ## 2. DTOs (`dtos.py`)
 
-I updated the existing `UserResponseSchema` by adding the `hash_password` field.
-
+I updated the existing `UserResponseSchema` by adding the 
 ```python
 class UserResponseSchema(BaseModel):
     name: str
@@ -31,14 +30,12 @@ class UserResponseSchema(BaseModel):
     email: str
     mobile_num: str
     id: int
-    hash_password: str
 ```
 
 ### Explanation
 
 - `UserResponseSchema` defines the structure of the response returned by the registration API.
-- I added `hash_password: str` The hash is not returned in the response, for security.
-- The field type `str` indicates that the hash password value must be a string.
+- `hash_password` is not in the response schema. The hash stays in the database, for security.
 
 ## 3. Username Validation (`controller.py`)
 
@@ -87,9 +84,9 @@ I tested the validation functionality using Postman.
 - Tested duplicate username validation.
 - Received `400 Bad Request` when using an existing username.
 - Tested duplicate email validation.
-- Checked the registration response after adding `hash_password` to 
-- The hash is not returned in the response, for security.
+- Verified that the response does not contain the password hash.
 
+## 6. Errors and Corrections
 During today's implementation and testing, I corrected:
 
 - `unoque=True` to `unique=True` in the UserModel.
