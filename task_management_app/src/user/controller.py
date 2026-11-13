@@ -1,15 +1,15 @@
 from datetime import datetime, timedelta, timezone
 
 import jwt
-from fastapi import HTTPException, Request, Depends
+from fastapi import Depends, HTTPException, Request
 from jwt.exceptions import InvalidTokenError
 from pwdlib import PasswordHash
 from sqlalchemy.orm import Session
 
 from src.user.dtos import LoginSchema, UserSchema
 from src.user.models import UserModel
-from src.utils.settings import settings
 from src.utils.db import get_db
+from src.utils.settings import settings
 
 password_hash = PasswordHash.recommended()
 

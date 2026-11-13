@@ -1,12 +1,12 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.tasks import controller
 from src.tasks.dtos import TaskResponseSchema, TaskSchema
 from src.utils.db import get_db
-from src.user.controller import is_authenticated
-from src.user.models import UserModel
-from typing import List
+from src.utils.helpers import is_authenticated
 
 task_routes = APIRouter(prefix="/tasks")
 
