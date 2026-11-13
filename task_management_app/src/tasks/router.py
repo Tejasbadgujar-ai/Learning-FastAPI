@@ -1,21 +1,22 @@
+from typing import List
+
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from src.tasks import controller
 from src.tasks.dtos import TaskResponseSchema, TaskSchema
 from src.utils.db import get_db
-from src.user.controller import is_authenticated
 from src.user.models import UserModel
-from typing import List
+from src.utils.helpers import is_authenticated
 
 task_routes = APIRouter(prefix="/tasks")
 
 
 @task_routes.post("/create", response_model=TaskResponseSchema, status_code=201)
 def create_task(
-    body: TaskSchema, db: Session = Depends(get_db), user=Depends(is_authenticated)
+    body: TaskSchema, db: Session = Depends(get_db), user: UserModel =Depends(is_authenticated)
 ):
-    return controller.create_task(body, db)
+    return controller.create_task(body, db, user)
 
 
 @task_routes.get("/all_tasks", response_model=List[TaskResponseSchema], status_code=200)
