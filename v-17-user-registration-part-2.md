@@ -22,7 +22,7 @@ username = Column(String, nullable=False, unique=True)
 
 ## 2. DTOs (`dtos.py`)
 
-I updated the existing `UserResponseSchema` by adding the 
+UserResponseSchema does not include hash_password.
 ```python
 class UserResponseSchema(BaseModel):
     name: str

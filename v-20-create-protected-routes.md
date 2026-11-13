@@ -99,27 +99,35 @@ By adding `user = Depends(is_authenticated)` to all five routes, FastAPI checks 
 - The `is_authenticated` dependency verifies the user.
 - The authenticated user is received through the `user` parameter.
 
-## 4. User Controller – Authentication Updates
+## 4. Authentication Helper – Centralized Authentication
 
-I updated the existing authentication code to work with the Bearer authorization header and Python 3.8.
+Initially, I created the `is_authenticated` function in `src/utils/helpers.py` and also had another copy in `src/user/controller.py`.
 
-- Read the token from the Authorization header.
-- Extracted the token after the `Bearer ` prefix.
-- Decoded and validated the JWT.
-- Retrieved the user ID from the token.
-- Verified the user in the database.
-- Returned the authenticated user after successful validation.
+During the review, I removed the duplicate function from `user/controller.py` and kept only one authentication function in `helpers.py`.
+
+Both `src/tasks/router.py` and `src/user/router.py` now import `is_authenticated` from `src/utils/helpers.py`.
+
+I also protected the `/is_auth` endpoint using `Depends(is_authenticated)`.
+
+### Changes Summary
+
+- Kept only one `is_authenticated` function in `helpers.py`.
+- Removed the duplicate function from `user/controller.py`.
+- Updated the task router import.
+- Updated the user router import.
+- Protected `/is_auth` using the authentication dependency.
+- Maintained Python 3.8 compatibility.
 
 ## 5. Postman Testing
 
 1. First, I sent the Login API request.
-2. I copied the `access_token` from the login response.
+2. I copied the `token` from the login response.
 3. I opened the protected task API request.
 4. I added the following header:
 
    **Key:** `Authorization`
 
-   **Value:** `Bearer <access_token>`
+   **Value:** `Bearer <token>`
 
 5. I clicked Send.
 6. The protected task API worked with a valid token.
