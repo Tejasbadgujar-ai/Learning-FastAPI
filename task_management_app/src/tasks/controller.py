@@ -24,8 +24,8 @@ def create_task(body: TaskSchema, db: Session, user:UserModel):
     return new_task
 
 
-def get_all_tasks(db: Session):
-    tasks = db.query(TaskModel).all()
+def get_all_tasks(db: Session, user: UserModel):
+    tasks = db.query(TaskModel).filter(TaskModel.user_id ==user.id).all()
     return tasks
 
 
@@ -38,10 +38,13 @@ def get_one_task(task_id: int, db: Session):
     return one_task
 
 
-def update_task(body: TaskSchema, task_id: int, db: Session):
+def update_task(body: TaskSchema, task_id: int, db: Session, user:UserModel):
     one_task = db.get(TaskModel, task_id)
     if not one_task:
         raise HTTPException(status_code=404, detail="Task not found")
+
+    if one_task.user_id != user.id:
+        raise HTTPException(status_code=401, detail="You Are Not Allow To Update This Task")
 
     body = body.model_dump()
     for field, value in body.items():
@@ -54,10 +57,13 @@ def update_task(body: TaskSchema, task_id: int, db: Session):
     return one_task
 
 
-def delete_task(task_id: int, db: Session):
-    one_task = db.get(TaskModel, task_id)
+def delete_task(task_id: int, db: Session, user:UserModel):
+    one_task = db.query(TaskModel).get(task_id)
     if not one_task:
         raise HTTPException(status_code=404, detail="Task not found")
 
+    if one_task.user_id != user.id:
+            raise HTTPException(status_code=401, detail="You Are Not Allow To delete This Task")
+    
     db.delete(one_task)
     db.commit()
