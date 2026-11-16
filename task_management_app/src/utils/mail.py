@@ -4,18 +4,17 @@ from typing import List
 
 
 conf = ConnectionConfig(
-    MAIL_USERNAME = "worldlike6230@gmail.com",
-    MAIL_PASSWORD = "qptckonareobkbmu",
-    MAIL_FROM = "worldlike6230@gmail.com",
-    MAIL_PORT = 587,
-    MAIL_SERVER = "smtp.gmail.com",
+    MAIL_USERNAME="worldlike6230@gmail.com",
+    MAIL_PASSWORD="qptckonareobkbmu",
+    MAIL_FROM="worldlike6230@gmail.com",
+    MAIL_PORT=587,
+    MAIL_SERVER="smtp.gmail.com",
     MAIL_FROM_NAME="TechSimPlus Learnings",
-    MAIL_STARTTLS = True,
-    MAIL_SSL_TLS = False,
-    USE_CREDENTIALS = True,
-    VALIDATE_CERTS = True
+    MAIL_STARTTLS=True,
+    MAIL_SSL_TLS=False,
+    USE_CREDENTIALS=True,
+    VALIDATE_CERTS=True,
 )
-
 
 
 async def send_email(emails: List[str]):
@@ -25,8 +24,9 @@ async def send_email(emails: List[str]):
         subject="Registration Confirmation",
         recipients=emails,
         body=html,
-        subtype=MessageType.html)
+        subtype=MessageType.html,
+    )
 
     fm = FastMail(conf)
     await fm.send_message(message)
-    return {"message": "email has been sent Successfully"}
+    print({"message": "email has been sent Successfully"})
